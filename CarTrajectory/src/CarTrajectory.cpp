@@ -14,7 +14,7 @@
 #define MIN_NUM_FEAT 2000 //features threshold
 
 //Tracks detected features from one image in another image
-void TrackFeatures(cv::Mat aImage1, cv::Mat aImage2, std::vector<cv::Point2f>& aPoints1, std::vector<cv::Point2f>& aPoints2, std::vector<uchar>& aStatus) 
+void TrackFeatures(cv::Mat aImage1, cv::Mat aImage2, std::vector<cv::Point2f>& aPoints1, std::vector<cv::Point2f>& aPoints2, std::vector<uchar>& aStatus)
 {
 	// This function automatically gets rid of points for which tracking fails
 	std::vector<float> err;
@@ -43,7 +43,7 @@ void TrackFeatures(cv::Mat aImage1, cv::Mat aImage2, std::vector<cv::Point2f>& a
 // Uses FAST algorithm for feature detection. Converts the datatype of the 
 // detected feature points from KeyPoints to a vector of Point2f, so that we
 // can directly pass it to the feature tracking step.
-void DetectFeatures(cv::Mat aImage, std::vector<cv::Point2f>& aPoints) 
+void DetectFeatures(cv::Mat aImage, std::vector<cv::Point2f>& aPoints)
 {
 	std::vector<cv::KeyPoint> keypoints;
 	const int fastThreshold = 20;
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 	int frameNumber; // Amount of images we have to construct a trajectory of a moving car
 	std::string dataDir;
 	std::string calibFilePath;
-	
+
 	std::cout << "Please, Specify Path to Calibration Info!" << std::endl;
 	std::cin >> calibFilePath;
 
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 	while (std::getline(file2, str))
 	{
 		std::istringstream stream(str.substr(4));
-		for (int i = 0; i < 4; ++i) 
+		for (int i = 0; i < 4; ++i)
 		{
 			double value;
 			stream >> value;
@@ -148,8 +148,8 @@ int main(int argc, char** argv)
 	cv::namedWindow("Pictures from Camera of Moving Car", cv::WINDOW_AUTOSIZE);
 
 	file1 << "image1" << std::endl << "Rotation Matrix: " << std::endl << rotationMatrix << std::endl
-		   << "Translation vector: " << std::endl << "[" << translationVector.at<double>(0) << " "
-		   << translationVector.at<double>(1) << " " << translationVector.at<double>(2) << "]" << std::endl;
+		<< "Translation vector: " << std::endl << "[" << translationVector.at<double>(0) << " "
+		<< translationVector.at<double>(1) << " " << translationVector.at<double>(2) << "]" << std::endl;
 
 	// Performing all these steps for the following images
 	for (int frameCount = 2; frameCount < frameNumber; ++frameCount)
@@ -163,13 +163,13 @@ int main(int argc, char** argv)
 
 		essentialMatrix = cv::findEssentialMat(currFeatures, prevFeatures, focal, pp, cv::RANSAC, 0.999, 1.0, mask);
 		cv::recoverPose(essentialMatrix, currFeatures, prevFeatures, R, t, focal, pp, mask);
-		
+
 		translationVector = translationVector + scale * (rotationMatrix * t);
 		rotationMatrix = R * rotationMatrix;
-	
+
 		file1 << "image" << frameCount << std::endl << "Rotation Matrix: " << std::endl << rotationMatrix << std::endl
-			  << "Translation vector: " << std::endl << "[" << translationVector.at<double>(0) << " "
-			  << translationVector.at<double>(1) << " " << translationVector.at<double>(2) << "]" << std::endl;
+			<< "Translation vector: " << std::endl << "[" << translationVector.at<double>(0) << " "
+			<< translationVector.at<double>(1) << " " << translationVector.at<double>(2) << "]" << std::endl;
 
 		// if the number of features drop below a certain threshold a new feature detection is needed
 		if (prevFeatures.size() < MIN_NUM_FEAT)

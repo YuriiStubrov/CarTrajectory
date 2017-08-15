@@ -113,7 +113,8 @@ int main(int argc, char** argv)
 	while (std::getline(file2, str))
 	{
 		std::istringstream stream(str.substr(4));
-		for (int i = 0; i < 4; ++i) {
+		for (int i = 0; i < 4; ++i) 
+		{
 			double value;
 			stream >> value;
 			calib.push_back(value);
@@ -162,11 +163,10 @@ int main(int argc, char** argv)
 
 		essentialMatrix = cv::findEssentialMat(currFeatures, prevFeatures, focal, pp, cv::RANSAC, 0.999, 1.0, mask);
 		cv::recoverPose(essentialMatrix, currFeatures, prevFeatures, R, t, focal, pp, mask);
+		
+		translationVector = translationVector + scale * (rotationMatrix * t);
+		rotationMatrix = R * rotationMatrix;
 	
-        translationVector = translationVector + scale * (rotationMatrix * t);
-	    rotationMatrix = R * rotationMatrix;
-	
-
 		file1 << "image" << frameCount << std::endl << "Rotation Matrix: " << std::endl << rotationMatrix << std::endl
 			  << "Translation vector: " << std::endl << "[" << translationVector.at<double>(0) << " "
 			  << translationVector.at<double>(1) << " " << translationVector.at<double>(2) << "]" << std::endl;
